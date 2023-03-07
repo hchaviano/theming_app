@@ -1,0 +1,33 @@
+name: theming_app
+repository: https://github.com/hchaviano/theming_app
+
+packages:
+  - "packages/**"
+  - .
+
+command:
+  bootstrap:
+    runPubGetInParallel: false
+    usePubspecOverrides: true
+
+scripts:
+  postclean: >
+    melos exec --flutter --concurrency=3 -- "flutter clean"
+
+  # postbootstrap: >
+  #   flutter pub run build_runner build --delete-conflicting-outputs
+  #   && cd packages/translations/ && flutter gen-l10n
+  #   && cd ../dashboard_repository && flutter pub run build_runner build --delete-conflicting-outputs
+  #   && cd ../core_services && flutter pub run build_runner build --delete-conflicting-outputs
+
+  analyze:
+    run: melos exec -- "flutter analyze"
+    description: Run `flutter analyze` in all packages
+
+  format:
+    run: melos exec -- "dart format . --set-exit-if-changed"
+    description: Run `dart format .` in all packages
+
+  test:
+    run: melos exec --dir-exists=test -- "flutter test"
+    description: Run `flutter test` in all packages

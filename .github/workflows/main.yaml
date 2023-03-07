@@ -1,13 +1,49 @@
 name: theming_app
 
-on: [pull_request, push]
+on:
+  pull_request:
+    paths:
+      - "lib/**"
+      - "packages/**"
 
 jobs:
-  semantic-pull-request:
-    uses: VeryGoodOpenSource/very_good_workflows/.github/workflows/semantic_pull_request.yml@v1
-
   build:
-    uses: VeryGoodOpenSource/very_good_workflows/.github/workflows/flutter_package.yml@v1
-    with:
-      flutter_channel: stable
-      flutter_version: 3.3.10
+    defaults:
+      run:
+        working-directory: .
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - uses: kuhnroyal/flutter-fvm-config-action@v1
+      - uses: subosito/flutter-action@v2
+        with:
+          flutter-version: ${{ env.FLUTTER_VERSION }}
+          channel: ${{ env.FLUTTER_CHANNEL }}
+          cache: true
+
+      - name: Flutter doctor
+        run: flutter doctor -v
+
+      - name: Install Melos and bootstrap (get the dependencies)
+        run: |
+          dart pub global activate melos
+          melos bootstrap --sdk-path=/opt/hostedtoolcache/flutter/stable-${{ env.FLUTTER_VERSION }}-x64
+
+      - name: Cache Flutter artifacts
+        uses: actions/cache@v2
+        env:
+          cache-name: cache-flutter-dependencies
+        with:
+          key: ${{ runner.os }}-build-${{ env.cache-name }}
+          path: |
+            ./build
+            ./.dart_tool
+
+      - name: Format
+        run: melos run format
+
+      - name: Analyze
+        run: melos run analyze

@@ -29,6 +29,12 @@ $ flutter run --flavor staging --target lib/main_staging.dart
 $ flutter run --flavor production --target lib/main_production.dart
 ```
 
+## Melos and FVM
+
+- Install melos: `dart pub global activate melos`
+- Bootstrapping repo: `melos bootstrap` or `melos bs` - NOTE: If flutter version doesn't match expected version in `pubsec.yaml`, set the sdkPath while bootstrapping like so: `melos bootstrap --sdk-path=/Users/<YOUR_USER>/fvm/versions/3.7.0` or `melos bootstrap --sdk-path=.fvm/flutter_sdk`
+- Cleaning repo: `melos clean`
+
 _\*Theming App works on iOS, Android, Web, and Windows._
 
 ---
